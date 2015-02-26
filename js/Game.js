@@ -1,4 +1,9 @@
 var TopDownGame = TopDownGame || {};
+var leftKey,
+	rightKey,
+	upKey,
+	downKey,
+	pauseKey;
 
 TopDownGame.Game = function() {};
 
@@ -34,6 +39,13 @@ TopDownGame.Game.prototype = {
 
 		//allowing character to move
 		this.cursors = this.game.input.keyboard.createCursorKeys();
+
+		leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
+		rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
+		upKey = this.game.input.keyboard.addKey(Phaser.Keyboard.W);
+		downKey = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
+		pauseKey = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
+
 	},
 	createGems: function() {
 		//create gems
@@ -79,16 +91,16 @@ TopDownGame.Game.prototype = {
 		this.player.body.velocity.x = 0;
 		this.player.body.velocity.y = 0;
 
-		if(this.cursors.up.isDown) {
+		if(this.cursors.up.isDown || upKey.isDown) {
 			this.player.body.velocity.y -= 130;
 		}
-		else if(this.cursors.down.isDown) {
+		else if(this.cursors.down.isDown || downKey.isDown) {
 			this.player.body.velocity.y += 130;
 		}
-		if(this.cursors.left.isDown) {
+		if(this.cursors.left.isDown || leftKey.isDown) {
 			this.player.body.velocity.x -= 130;
 		}
-		else if(this.cursors.right.isDown) {
+		else if(this.cursors.right.isDown || rightKey.isDown) {
 			this.player.body.velocity.x += 130;
 		}
 
@@ -99,6 +111,7 @@ TopDownGame.Game.prototype = {
 		//Win condition
 		if(this.gems.length === 0) {
 			console.log('You win!');
+			this.state.start('GameOver');
 		}
 	}
 };

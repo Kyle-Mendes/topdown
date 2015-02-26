@@ -6,7 +6,7 @@ TopDownGame.Boot = function() {};
 TopDownGame.Boot.prototype = {
 	create: function() {
 		// the loading screen BG is white
-		this.game.stage.backgroundColor = '#fff';
+		this.game.stage.backgroundColor = '#000';
 
 		//scaling options
 		this.game.scaleMode = Phaser.ScaleManager.SHOW_ALL;
