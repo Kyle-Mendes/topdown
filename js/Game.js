@@ -3,7 +3,11 @@ var leftKey,
 	rightKey,
 	upKey,
 	downKey,
-	pauseKey;
+	pauseKey,
+	cameraX = 0,
+	cameraY = 0,
+	h = 320,
+	w = 320;
 
 TopDownGame.Game = function() {};
 
@@ -35,7 +39,11 @@ TopDownGame.Game.prototype = {
 		this.game.physics.arcade.enable(this.player);
 
 		//setting the camera to follow our player
-		this.game.camera.follow(this.player);
+		// this.game.camera.follow(this.player);
+		// this.game.camera.setPosition(0, 0);
+		this.tween = false;
+		this.game.camera.y = 0;
+		this.game.camera.x = 0;
 
 		//allowing character to move
 		this.cursors = this.game.input.keyboard.createCursorKeys();
@@ -83,6 +91,40 @@ TopDownGame.Game.prototype = {
 			sprite[key] = element.properties[key];
 		});
 	},
+	cameraMovements: function() {
+
+		if (this.tween)
+			return;
+
+		this.tween = true;
+		var toMove = false,
+			speed = 600;
+
+		if (this.player.y > this.game.camera.y + h) {
+			cameraY += 1;
+			toMove = true;
+		}
+		else if (this.player.y < this.game.camera.y) {
+			console.log(this.player.y, this.game.camera.y);
+			cameraY -= 1;
+			toMove = true;
+		}
+		else if (this.player.x > this.game.camera.x + w) {
+			cameraX += 1;
+			toMove = true;
+		}
+		else if (this.player.x < this.game.camera.x) {
+			cameraX -= 1;
+			toMove = true;
+		}
+		if (toMove) {
+			var t = this.game.add.tween(this.game.camera).to({x: cameraX * w, y: cameraY * h}, speed);
+			t.start();
+			t.onComplete.add(function(){this.tween = false;}, this);
+		} else {
+			this.tween = false;
+		}
+	},
 	collect: function(player, collectable) {
 		collectable.destroy();
 	},
@@ -103,6 +145,9 @@ TopDownGame.Game.prototype = {
 		else if(this.cursors.right.isDown || rightKey.isDown) {
 			this.player.body.velocity.x += 130;
 		}
+
+		// move the camera
+		this.cameraMovements();
 
 		//Collision
 		this.game.physics.arcade.collide(this.player, this.blockedLayer);
